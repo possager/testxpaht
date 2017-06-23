@@ -1,7 +1,10 @@
 #_*_coding:utf-8_*_
 import scrapy
 import re
+import pickle
 from testxpaht import myPageStucture
+
+
 
 
 class testxpath(scrapy.Spider):
@@ -109,8 +112,6 @@ class testxpath(scrapy.Spider):
 
     def parse(self, response):
         thisclass=myPageStucture.pageStructure()
-
-
         def getchild(fatherfunc,tagfunc,xpathfunc,numfunc,fatherstructure_class):
 
             thisclass2=myPageStucture.pageStructure()
@@ -123,6 +124,7 @@ class testxpath(scrapy.Spider):
             # print '        -----------------------text--end--------------------'
             num=1
             tag_this_div={}#用一个字典来判断这个子标签div在所在的标签中出现了多少次好用来设置xpath路径
+            div_number=1
             for j2 in thischild:
                 try:
 
@@ -140,15 +142,17 @@ class testxpath(scrapy.Spider):
                     thisclass2.content=fatherfunc.xpath('%s[%d]/text()' % (xpathfunc, numfunc)).extract()#传过来就已经是子标签,所以这里处理一下num就行
                     thisclass2.num=num
                     thisclass2.xpath=xpath
+                    thisclass.divnum=div_number
                     fatherstructure_class.child[tag]=thisclass2
 
-
+                    div_number+=1
                     getchild(j2,tag,xpath,num,thisclass2)
                 except Exception as e:
                     print e
         i1=response.xpath('/child::node()')
         num=1
         tag_this_div = {}
+        div_number=1
         for j1 in i1:
             try:
                 tag= j1.root.tag
@@ -166,13 +170,20 @@ class testxpath(scrapy.Spider):
                 thisclass.content=j1.xpath('/%s/text()'%tag)
                 thisclass.xpath=xpath
                 thisclass.num=num
+                thisclass.divnum=div_number
                 #thisclass需要获得5个标签,这里4个,下边在子节点中再获得它所有的child
 
                 print xpath
                 getchild(fatherfunc=j1,tagfunc=tag,xpathfunc=xpath,numfunc=num,fatherstructure_class=thisclass)
-                num+=1
+                div_number+=1
             except Exception as e:
                 pass
 
         print thisclass
+        p1=pickle.dumps(thisclass,-1)
+        file2='/home/liang/Desktop/pickle/pickle2.pkl'
+        with open(file2,'w+') as fl:
+            fl.write(p1)
+
+
         pass

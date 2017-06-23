@@ -1,6 +1,5 @@
 #_*_coding:utf-8_*_
 import re
-
 class pageStructure:
     def __init__(self):
         self.name=None

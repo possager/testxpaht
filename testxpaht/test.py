@@ -1,13 +1,11 @@
-name = "lzl"
+import pickle
+from testxpaht import myPageStucture
 
+thisclass=myPageStucture.pageStructure()
 
-def f1():
-    print(name)
+pickle1=pickle.dumps(thisclass)
+print pickle1
+pickle2=pickle.loads(pickle1)
 
-
-def f2():
-    name = "eric"
-    f1()
-    print name
-
-f2()
+print pickle2.name
+print pickle2.num
