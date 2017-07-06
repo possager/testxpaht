@@ -133,7 +133,7 @@ class testxpath(scrapy.Spider):
 
                     if tag not in tag_this_div.keys():#如果这个标签没出现过,记录它,num重置;否则,num+1
                         tag_this_div[tag]=1
-                        num=1
+                        num=1#后来发现其实不要这个num也是可以没有的，后边直接传入tag_this_div[tag]
                     else:
                         tag_this_div[tag]+=1
                         num=tag_this_div[tag]
@@ -143,9 +143,9 @@ class testxpath(scrapy.Spider):
                     thisclass2.num=num
                     thisclass2.xpath=xpath
                     thisclass.divnum=div_number
-                    fatherstructure_class.child[tag]=thisclass2
+                    fatherstructure_class.child[tag]=thisclass2#这里的tag貌似没有添加下标，可能会出错。
 
-                    div_number+=1
+                    div_number+=1#这个div_number代表是的当前子节点下所有的子标签数量，前边的num表示的同一个标签的的出现次数
                     getchild(j2,tag,xpath,num,thisclass2)
                 except Exception as e:
                     print e
@@ -181,7 +181,7 @@ class testxpath(scrapy.Spider):
 
         print thisclass
         p1=pickle.dumps(thisclass,-1)
-        file2='/home/liang/Desktop/pickle/pickle2.pkl'
+        file2='/home/passager/Desktop/xpath/xpath.pkl'
         with open(file2,'w+') as fl:
             fl.write(p1)
 
