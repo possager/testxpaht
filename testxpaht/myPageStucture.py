@@ -13,6 +13,8 @@ class pageStructure:
         self.TAL=0#文本中字符的长度
         self.TP=None#表示节点的属性,如div,tr,td等,与那么属性重合
         self.NTP=None#表节点与标题之间的关系,在\其之上为'U',在其之下为'D'
+        self.All_clause=None
+        self.has_url=0
 
 
         self.child={}#用来表示自己的子节点,每一个子节点都是一个pagestructure
@@ -20,20 +22,56 @@ class pageStructure:
 
 
     def Init(self):
-        self.TAl=len(self.content)
+
+
+        #TL------------节点的字符总长度
+        #PN------------标点符号的总长度
+        #ND------------两个字符长度大于0的节点,他们间隔字符长度为0的节点数量.
+        #TDTN----------标点誓词\动词\成语\团体机构\时间\简称略语所组成的实词集合,统计出来之后再在文本中出现的次数.
+        #TAL-----------文本中单句字符的长度/标点符号的数量
+        #TP------------标签为a,则记录为'A',若是'div','table','p','tbody'则记录为D,其余的全部记录为S
+        #NTP-----------位置在节点之上的标题记录为U,在标题之下记录为D,节点的内容是B.
+
+
+        self.Tl=len(self.content)#文本长度
         # content_no_Symbol=self.content.replace(u'，','').replace(u'。','').replace(u'“','').replace(u'-','').replace(u'"')#没有处理中文符号，暂时先这样
         # self.TL=len(content_no_Symbol)
 
-        Re_find_PN=re.compile(r'[\,\.\'\"\;\。——\-\，\”\“\！\《\》\!\<\>\{\}\<\>]')
-        PN_list=Re_find_PN.findall(self.content)
-        self.PN=len(PN_list),self.content
+        Re_find_symbol=re.compile(ur'[\,\.\'\"\;\。\-\，”“!《》！，\<\>\{\}\<\>]')
+        PN_list_biaodian=Re_find_symbol.findall(self.content)#所有的标点符号
+        # for i in PN_list:
+        #     print i
 
-        content_no_Symbol=Re_find_PN.sub('',self.content)
-        self.TL=len(content_no_Symbol)
-        self.TAl=len(self.content)
+        self.PN=len(PN_list_biaodian)
+
+        content_no_Symbol=re.sub(Re_find_symbol,repl='',string=self.content)#没有符号的文本内容
+        self.TL_no_symbol=len(content_no_Symbol)
+
+
+
+
+        self.All_clause=re.split(Re_find_symbol,self.content)
+        lenth=0
+        for one_clause in self.All_clause:
+            lenth+=len(one_clause)/self.PN
+        self.TAL=lenth#这个指标被我给改变了,是我自定义的一个指标
+        # self.TAL=len(self.content)/len(self.All_clause)
+
+        if self.name=='a':
+            self.TP='A'
+        elif self.name in ['div','tr','td']:
+            self.TP='D'
+        else:
+            self.TP='S'
+
+
+
+
+
         print content_no_Symbol,len(content_no_Symbol)
         print len(self.content)
         self.TP=self.name+'['+str(self.num)+']'
+
 
     def putin(self,pageStructure):
         if pageStructure.name ==None:
@@ -44,7 +82,7 @@ class pageStructure:
 
 if __name__ == '__main__':
     thisclass=pageStructure()
-    thisclass.content='你好啊！《某个电影》，这里的文本做测试用“当然这里也是--这里还是”,of course this also be'
+    thisclass.content=u'你好啊！《某个电影》，这里的文本做测试用“当然这里也是--这里还是”,of course this also be'
     thisclass.name='div'
     thisclass.num=1
     thisclass.Init()

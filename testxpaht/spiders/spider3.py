@@ -76,7 +76,7 @@ class testxpath(scrapy.Spider):
             #     i11=iii.xpath(str1)#######################################卸载变量里边,反正学成xpath('head/child::node')上边已经证明了是没有问题的
             # # print i11.xpath('child::node()')
             # print i11
-            print "______________qq______"
+            print "___________________________________qq_______________________________________"
 
     def parse4(self,response):
         def childget(father):
@@ -90,6 +90,7 @@ class testxpath(scrapy.Spider):
                 else:
                     print child1.root.tag
                     childget(child1)
+                    #删除:body > div:nth-child(9) > table > tbody > tr > td:nth-child(3) > div > table > tbody > tr:nth-child(1) > td > div > table:nth-child(3) > tbody > tr > td > p > table > tbody > tr:nth-child(1) > td.new14 > a
 
         i1 = response.xpath('/html/child::node()')
         for child in i1:
@@ -127,10 +128,8 @@ class testxpath(scrapy.Spider):
             div_number=1
             for j2 in thischild:
                 try:
-
                     tag= j2.root.tag
                     xpath='%s[%d]/%s'%(xpathfunc,numfunc,tag)
-
                     if tag not in tag_this_div.keys():#如果这个标签没出现过,记录它,num重置;否则,num+1
                         tag_this_div[tag]=1
                         num=1#后来发现其实不要这个num也是可以没有的，后边直接传入tag_this_div[tag]
@@ -143,7 +142,11 @@ class testxpath(scrapy.Spider):
                     thisclass2.num=num
                     thisclass2.xpath=xpath
                     thisclass.divnum=div_number
-                    fatherstructure_class.child[tag]=thisclass2#这里的tag貌似没有添加下标，可能会出错。
+                    fatherstructure_class.child[tag+str(num)]=thisclass2#这里的tag貌似没有添加下标，可能会出错。#7-6对头,今天发现了tag没有下表,出错了
+                    has_url= fatherfunc.xpath('%s[%d]/@href'%(xpathfunc,numfunc))
+                    if has_url:
+                        thisclass2.has_url=1
+
 
                     div_number+=1#这个div_number代表是的当前子节点下所有的子标签数量，前边的num表示的同一个标签的的出现次数
                     getchild(j2,tag,xpath,num,thisclass2)
@@ -172,7 +175,6 @@ class testxpath(scrapy.Spider):
                 thisclass.num=num
                 thisclass.divnum=div_number
                 #thisclass需要获得5个标签,这里4个,下边在子节点中再获得它所有的child
-
                 print xpath
                 getchild(fatherfunc=j1,tagfunc=tag,xpathfunc=xpath,numfunc=num,fatherstructure_class=thisclass)
                 div_number+=1
@@ -184,6 +186,4 @@ class testxpath(scrapy.Spider):
         file2='/home/passager/Desktop/xpath/xpath.pkl'
         with open(file2,'w+') as fl:
             fl.write(p1)
-
-
         pass
