@@ -9,7 +9,7 @@ from testxpaht import myPageStucture
 
 class testxpath(scrapy.Spider):
     name = 'spider'
-    start_urls=['http://sn.newssc.org/system/20170418/002159156.html']#http://sn.newssc.org/system/20170418/002159156.html
+    start_urls=['http://sn.newssc.org/system/20170418/002159156.html']#http://sn.newssc.org/system/20170418/002159156.html------#/html/body/div[7]/table/tbody/tr/td[1]/div/table[2]/tbody/tr[7]/td/div/table/tbody/tr/td/p[9]
     # start_urls=['http://www.w3school.com.cn/example/xmle/books.xml']
     def parse3(self, response):
 
@@ -114,20 +114,27 @@ class testxpath(scrapy.Spider):
     def parse(self, response):
         thisclass=myPageStucture.pageStructure()
         def getchild(fatherfunc,tagfunc,xpathfunc,numfunc,fatherstructure_class):
+            #1,因为fathernode下边需要有子节点信息,所有传入子getchild中;
+            #2,传来xpathfunc的时候就已经包含了tag信息了;
+            #3,content,
 
-            thisclass2=myPageStucture.pageStructure()
-
+            # thisclass2=myPageStucture.pageStructure()
+            fatherstructure_class.content = fatherfunc.xpath('%s[%d]/text()' % (xpathfunc, numfunc)).extract()
             thischild=fatherfunc.xpath('%s[%d]/child::node()'%(xpathfunc,numfunc))
-            print '%s[%d]/child::node()' % (xpathfunc, numfunc)
+            has_url = fatherfunc.xpath('%s[%d]/@href' % (xpathfunc, numfunc)).extract()
+            if has_url:
+                fatherstructure_class.has_url = 1
+            # print '%s[%d]/child::node()' % (xpathfunc, numfunc)#没有蛋用
             # print ' ----------------------------text--begin-----------------------------------'
             # for icontent in fatherfunc.xpath('%s[%d]/text()' % (xpathfunc, numfunc)).extract():
             #     print icontent
             # print '        -----------------------text--end--------------------'
-            num=1
+
             tag_this_div={}#用一个字典来判断这个子标签div在所在的标签中出现了多少次好用来设置xpath路径
             div_number=1
-            for j2 in thischild:
+            for j2 in thischild:#相当于第一层没有处理，是从第二层开始处理的，每一层的信息都在下一层的
                 try:
+                    thisclass2 = myPageStucture.pageStructure()
                     tag= j2.root.tag
                     xpath='%s[%d]/%s'%(xpathfunc,numfunc,tag)
                     if tag not in tag_this_div.keys():#如果这个标签没出现过,记录它,num重置;否则,num+1
@@ -138,14 +145,14 @@ class testxpath(scrapy.Spider):
                         num=tag_this_div[tag]
 
                     thisclass2.name=tag
-                    thisclass2.content=fatherfunc.xpath('%s[%d]/text()' % (xpathfunc, numfunc)).extract()#传过来就已经是子标签,所以这里处理一下num就行
+                    # thisclass2.content=fatherfunc.xpath('%s[%d]/text()' % (xpathfunc, numfunc)).extract()#传过来就已经是子标签,所以这里处理一下num就行
                     thisclass2.num=num
                     thisclass2.xpath=xpath
                     thisclass.divnum=div_number
-                    fatherstructure_class.child[tag+str(num)]=thisclass2#这里的tag貌似没有添加下标，可能会出错。#7-6对头,今天发现了tag没有下表,出错了
-                    has_url= fatherfunc.xpath('%s[%d]/@href'%(xpathfunc,numfunc))
-                    if has_url:
-                        thisclass2.has_url=1
+                    fatherstructure_class.child[tag + '_'+str(num)]=thisclass2#这里的tag貌似没有添加下标，可能会出错。#7-6对头,今天发现了tag没有下表,出错了
+                    # has_url= fatherfunc.xpath('%s[%d]/@href'%(xpathfunc,numfunc)).extract()
+                    # if has_url:
+                    #     thisclass2.has_url=1
 
 
                     div_number+=1#这个div_number代表是的当前子节点下所有的子标签数量，前边的num表示的同一个标签的的出现次数
@@ -170,20 +177,20 @@ class testxpath(scrapy.Spider):
                 #所有信息提取完成
 
                 thisclass.name=tag
-                thisclass.content=j1.xpath('/%s/text()'%tag)
+                thisclass.content=j1.xpath('/%s/text()'%tag).extract()
                 thisclass.xpath=xpath
-                thisclass.num=num
+                thisclass.num=1
                 thisclass.divnum=div_number
                 #thisclass需要获得5个标签,这里4个,下边在子节点中再获得它所有的child
-                print xpath
+                # print xpath
                 getchild(fatherfunc=j1,tagfunc=tag,xpathfunc=xpath,numfunc=num,fatherstructure_class=thisclass)
                 div_number+=1
             except Exception as e:
-                pass
+                pass#/html/body/div[7]/table/tbody/tr/td[1]/div/table[2]/tbody/tr[2]/td/p/b/font
 
         print thisclass
-        p1=pickle.dumps(thisclass,-1)
-        file2='/home/passager/Desktop/xpath/xpath.pkl'
-        with open(file2,'w+') as fl:
-            fl.write(p1)
-        pass
+        p1=pickle.dumps(thisclass,-1)#/html/body/div[7]/table/tbody/tr/td[3]/div/table/tbody/tr[1]/td/div/table[3]/tbody/tr/td/p/table/tbody/tr[1]/td[2]
+        # file2='/home/passager/Desktop/xpath/xpath.pkl'
+        # with open(file2,'w+') as fl:
+        #     fl.write(p1)
+        # pass
