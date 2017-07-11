@@ -9,7 +9,9 @@ from testxpaht import myPageStucture
 
 class testxpath(scrapy.Spider):
     name = 'spider'
-    start_urls=['http://sn.newssc.org/system/20170418/002159156.html']#http://sn.newssc.org/system/20170418/002159156.html------#/html/body/div[7]/table/tbody/tr/td[1]/div/table[2]/tbody/tr[7]/td/div/table/tbody/tr/td/p[9]
+    start_urls=['http://sn.newssc.org/system/20170418/002159156.html']
+    #http://sn.newssc.org/system/20170418/002159156.html------
+    # #/html/body/div[7]/table/tbody/tr/td[1]/div/table[2]/tbody/tr[7]/td/div/table/tbody/tr/td/p[9]
     # start_urls=['http://www.w3school.com.cn/example/xmle/books.xml']
     def parse3(self, response):
 
@@ -189,8 +191,9 @@ class testxpath(scrapy.Spider):
                 pass#/html/body/div[7]/table/tbody/tr/td[1]/div/table[2]/tbody/tr[2]/td/p/b/font
 
         print thisclass
+        # return thisclass
         p1=pickle.dumps(thisclass,-1)#/html/body/div[7]/table/tbody/tr/td[3]/div/table/tbody/tr[1]/td/div/table[3]/tbody/tr/td/p/table/tbody/tr[1]/td[2]
-        # file2='/home/passager/Desktop/xpath/xpath.pkl'
-        # with open(file2,'w+') as fl:
-        #     fl.write(p1)
-        # pass
+        file2='/media/liang/3804CCCA04CC8C76/project/YFzhongxin/xpath_test/xpath.pkl'
+        with open(file2,'w+') as fl:
+            fl.write(p1)
+        pass

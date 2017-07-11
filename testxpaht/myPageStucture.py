@@ -34,13 +34,10 @@ class pageStructure:
 
 
         self.Tl=len(self.content)#文本长度
-        # content_no_Symbol=self.content.replace(u'，','').replace(u'。','').replace(u'“','').replace(u'-','').replace(u'"')#没有处理中文符号，暂时先这样
-        # self.TL=len(content_no_Symbol)
 
         Re_find_symbol=re.compile(ur'[\,\.\'\"\;\。\-\，”“!《》！，\<\>\{\}\<\>]')
         PN_list_biaodian=Re_find_symbol.findall(self.content)#所有的标点符号
-        # for i in PN_list:
-        #     print i
+
 
         self.PN=len(PN_list_biaodian)
 
@@ -70,7 +67,7 @@ class pageStructure:
 
         print content_no_Symbol,len(content_no_Symbol)
         print len(self.content)
-        self.TP=self.name+'['+str(self.num)+']'
+        # self.TP=self.name+'['+str(self.num)+']'#这个在xpath中已经处理好了
 
 
     def putin(self,pageStructure):
